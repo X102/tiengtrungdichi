@@ -1093,10 +1093,9 @@
                  try {
                     const prompt = `Cho đoạn văn bản tiếng Trung sau, hãy chuyển đổi nó thành một mảng các đối tượng JSON.
 Mỗi đối tượng đại diện cho một ký tự hoặc một dấu câu/khoảng trắng.
-Nếu là ký tự tiếng Trung, đối tượng phải có thuộc tính "char" và "pinyin". 
+Nếu là ký tự tiếng Trung, đối tượng phải có thuộc tính "char" và "pinyin".
 Nếu là dấu câu, ký tự khác, hoặc ký tự xuống dòng (\n), đối tượng chỉ có thuộc tính "char".
 Ví dụ: '你好\n世界！' -> [{"char": "你", "pinyin": "nǐ"}, {"char": "好", "pinyin": "hǎo"}, {"char": "\n"}, {"char": "世", "pinyin": "shì"}, {"char": "界", "pinyin": "jiè"}, {"char": "！"}].
-Không được bỏ sót bất kỳ ký tự nào trong đoạn văn bản.
 Đây là văn bản cần xử lý:\n\n${chunk}`;
                     
                     const schema = { type: "ARRAY", items: { type: "OBJECT", properties: { "char": { "type": "STRING" }, "pinyin": { "type": "STRING" } } } };
@@ -1149,7 +1148,6 @@ Ví dụ: '我爱北京。\n' -> [{"word":"我","pinyin":"wǒ"},{"word":"爱","p
                     const jsonString = await callAI(prompt, "application/json", schema);
                     const segments = JSON.parse(jsonString);
 
-                    // --- START MODIFICATION (FIX LỖI MẤT PINYIN) ---
                     segments.forEach(seg => {
                         if (seg.word === '\n') {
                             container.appendChild(document.createElement('br'));
@@ -1182,7 +1180,6 @@ Ví dụ: '我爱北京。\n' -> [{"word":"我","pinyin":"wǒ"},{"word":"爱","p
                             container.appendChild(span);
                         }
                     });
-                    // --- END MODIFICATION ---
                  } catch (error) {
                      container.innerHTML += `<p class="text-red-600">Lỗi khi tách cụm từ: ${error.message}.</p>`;
                  } finally {
@@ -1193,10 +1190,21 @@ Ví dụ: '我爱北京。\n' -> [{"word":"我","pinyin":"wǒ"},{"word":"爱","p
             async function processExplanationChunk(chunk, container, spinner, append = false) {
                  spinner.style.display = 'block';
                  try {
-                    const prompt = `Giải thích nội dung ngữ pháp tiếng Trung sau đây một cách chi tiết và dễ hiểu bằng tiếng Việt, dành cho người học tiếng Trung.
-                    Tập trung vào các khái niệm ngữ pháp, ví dụ và quy tắc được trình bày trong văn bản:\n\n${chunk}`;
-                    const explanation = await callAI(prompt, "text/plain");
-                    container.innerHTML += explanation.replace(/\n/g, '<br>') + '<hr class="my-4">';
+                    const prompt = `Giải thích nội dung đoạn văn bản tiếng Trung sau đây một cách chi tiết và dễ hiểu bằng tiếng Việt.
+                    Câu trả lời Không cần chứa các lời chào và chúc, mở đầu, kết thúc đại loại như "Tuyệt vời,.." rườm rà, cần đi ngay vào nội dung chính.
+                     Thực hiện giải thích theo từng câu, gồm pinyin và nghĩa tiếng Việt cho mỗi câu, đồng thời nêu rõ các điểm ngữ pháp quan trọng trong mỗi câu một cách chi tiết.
+                     Cuối cùng tổng kết lại ý nghĩa toàn đoạn văn.
+                     Tập trung vào các khái niệm ngữ pháp, ví dụ và quy tắc được trình bày trong văn bản:\n\n${chunk}`;
+                     const explanation = await callAI(prompt, "text/plain");
+                    // --- START MODIFICATION (SỬA LỖI HIỂN THỊ MARKDOWN) ---
+                    // Chuyển đổi cú pháp Markdown đơn giản (in đậm) và xuống dòng
+                    const htmlExplanation = explanation
+                        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Chuyển **bold** thành <strong>bold</strong>
+                        .replace(/\n/g, '<br>');                           // Chuyển \n thành <br>
+                    
+                    container.innerHTML += htmlExplanation + '<hr class="my-4">';
+                    // --- END MODIFICATION ---
+
                  } catch (error) {
                      container.innerHTML += `<p class="text-red-600">Lỗi khi gọi AI để giải thích: ${error.message}.</p>`;
                  } finally {
@@ -1274,11 +1282,7 @@ Ví dụ: '我爱北京。\n' -> [{"word":"我","pinyin":"wǒ"},{"word":"爱","p
                 textDisplay.textContent = 'Đang tải nội dung từ URL...';
                 fetchUrlButton.disabled = true;
 
-                // --- START MODIFICATION (THAY ĐỔI PROXY) ---
-                // Proxy cũ: const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`;
-                // Proxy mới:
                 const proxyUrl = `https://api.codetabs.com/v1/proxy?quest=${encodeURIComponent(url)}`;
-                // --- END MODIFICATION ---
                 
                 try {
                     const response = await fetch(proxyUrl);
