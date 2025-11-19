@@ -791,8 +791,8 @@ Trả về một mảng JSON các đối tượng, mỗi đối tượng có thu
 Ví dụ: '我爱北京。\\n' -> [{"word":"我","pinyin":"wǒ"},{"word":"爱","pinyin":"ài"},{"word":"北京","pinyin":"Běijīng"},{"word":"。","pinyin":""},{"word":"\\n","pinyin":""}].
 Đây là văn bản cần xử lý:\n\n{{TEXT}}`,
                 explain: `Giải thích nội dung đoạn văn bản tiếng Trung sau đây một cách chi tiết và dễ hiểu bằng tiếng Việt.
-Câu trả lời Không cần chứa các lời chào và chúc, mở đầu, kết thúc đại loại như "Tuyệt vời,.." rườm rà, cần đi ngay vào nội dung chính.
-Thực hiện giải thích theo từng câu, gồm pinyin và nghĩa tiếng Việt cho mỗi câu, đồng thời nêu rõ các điểm ngữ pháp quan trọng trong mỗi câu một cách chi tiết.
+Câu trả lời Không chứa các lời chào và chúc, không chứa lời mở đầu, không chứa lời kết thúc đại loại như "Tuyệt vời,..", cần đi ngay vào nội dung chính.
+Thực hiện giải thích theo từng câu (phân tách bằng ngắt câu, ngẳt đoạn), gồm câu gốc, pinyin và nghĩa tiếng Việt cho mỗi câu, đồng thời nêu rõ các từ vựng và ngữ pháp quan trọng trong mỗi câu một cách chi tiết, không bỏ sót từ vựng nào.
 Cuối cùng tổng kết lại ý nghĩa toàn đoạn văn.
 Tập trung vào các khái niệm ngữ pháp, ví dụ và quy tắc được trình bày trong văn bản:\n\n{{TEXT}}`,
                 translate: `Dịch đoạn văn bản tiếng Trung sau đây sang tiếng Việt.
