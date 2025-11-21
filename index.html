@@ -756,8 +756,7 @@
                     loadPrompts();
                 } 
             });
-            
-            function updateApiKeyGuide() { apiKeyGuide.innerHTML = aiProviderSelect.value === 'gemini' ? 'Lấy API tại Google AI Studio' : 'Lấy API tại DeepSeek'; }
+            function updateApiKeyGuide() { apiKeyGuide.innerHTML = aiProviderSelect.value === 'gemini' ? 'Lấy API Key tại <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-blue-600 hover:underline">Google AI Studio</a>.' : 'Lấy API Key tại <a href="https://platform.deepseek.com/api_keys" target="_blank" class="text-blue-600 hover:underline">DeepSeek Platform</a>.'; }
             aiProviderSelect.addEventListener('change', () => { updateApiKeyGuide(); localStorage.setItem('dichiAiProvider', aiProviderSelect.value); });
             saveApiKeyButton.addEventListener('click', () => { localStorage.setItem('dichiApiKey', apiKeyInput.value); apiKeyStatus.textContent = "Đã lưu!"; setTimeout(() => apiKeyStatus.textContent = "", 2000); });
             chunkSizeInput.addEventListener('change', () => localStorage.setItem('dichiChunkSize', chunkSizeInput.value));
